@@ -20,11 +20,28 @@ const redactionMap = {
     },
     {
       type: 'class',
+      selector: 's-grid-colSm24 u-colorGray3',
+      replacement: {
+        type: 'text',
+        value: 'Intro Note'
+      }
+    },
+    {
+      type: 'class',
       selector: 'name u-fontSize24 u-fontWeight300 section-title',
       replacement: {
         type: 'childElement-text',
         childElementTag: 'a',
         value: '[Candidate Name]'
+      }
+    },
+    {
+      type: 'class',
+      selector: 'field-row-val s-flexgrid-colSmW s-vgPadLeft1',
+      replacement: {
+        type: 'childElement-text',
+        childElementTag: 'a',
+        value: '[Candidate Email]'
       }
     },
     {
