@@ -5,6 +5,15 @@ This chrome extension anonymizes candidate profiles to reduce unconscious bias. 
 * `https://angel.co/<company>/track/candidate/<candidate_id>/<candidate_name>`
 * `https://angel.co/<company>/track`
 
+On the AngelList candidate tracker, it turns
+
+![candidate](https://user-images.githubusercontent.com/1891931/31203600-b0dd9320-a91c-11e7-8ca1-5e18161911cb.png)
+
+into 
+
+![anonymized candidate](https://user-images.githubusercontent.com/1891931/31203603-b3170b1c-a91c-11e7-9ab4-340040f3f196.png)
+
+
 ## Installation
 
 Until this extension is available in the Chrome Web Store, you can try it out today by:
