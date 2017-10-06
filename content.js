@@ -1,3 +1,21 @@
+alert('adding listening onmessage');
+console.log('in content.js');
+try {
+  chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    alert('received message');
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.greeting == "hello")
+      sendResponse({farewell: "goodbye"});
+  }
+);
+} catch (err) {
+  alert(err);
+}
+alert('listener added');
+
 const redactionMap = {
   'angel.co': [
     {
@@ -122,6 +140,8 @@ function observe() {
   });
   observer.observe(target, { childList: true, subtree: true });
 }
+
+
 
 redact();
 observe();
