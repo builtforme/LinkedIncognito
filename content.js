@@ -28,7 +28,7 @@ const redactionMap = {
         childElementTag: 'img',
         childElementAttribute: 'src',
         value: 'https://angel.co/images/shared/nopic.png'
-      }
+      },
     },
     {
       type: 'class',
@@ -73,7 +73,7 @@ const redactionMap = {
         childElementTag: 'img',
         childElementAttribute: 'src',
         value: 'https://angel.co/images/shared/nopic.png'
-      }
+      },
     },
   ],
 };
@@ -115,14 +115,11 @@ function unredactElement(element, replacementRule) {
   if (replacementRule.type === 'text') {
     element.textContent = element.getAttribute('data-original-value');
   } else if (replacementRule.type === 'childElement-text') {
-    // var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    // innerElements[0].setAttribute('data-original-value', innerElements[0].textContent);
-    // innerElements[0].textContent = replacementRule.value;
+    var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
+    innerElements[0].textContent = innerElements[0].getAttribute('data-original-value');
   } else if (replacementRule.type === 'childElement-attribute') {
-    // var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    // innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute));
-    // innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute);
-    // innerElements[0].setAttribute(replacementRule.childElementAttribute, replacementRule.value);
+    var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
+    innerElements[0].setAttribute(replacementRule.childElementAttribute, innerElements[0].getAttribute('data-original-value'));
   } else {
     throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
   }
@@ -153,7 +150,9 @@ function redactElement(element, replacementRule) {
     innerElements[0].textContent = replacementRule.value;
   } else if (replacementRule.type === 'childElement-attribute') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    if (element.getAttribute('data-original-value') === null) {
+    if (innerElements[0].getAttribute('data-original-value') === null
+      || innerElements[0].getAttribute('data-original-value') === 'null'
+      || innerElements[0].getAttribute('data-original-value') === replacementRule.value) {
       innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute));
       innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute);
     }
