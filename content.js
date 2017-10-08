@@ -1,5 +1,5 @@
 let hide = true;
-
+console.log('LinkedIncognito is active.');
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.action === 'icon_click') {
@@ -11,6 +11,46 @@ chrome.runtime.onMessage.addListener(
 );
 
 const redactionMap = {
+  'www.linkedin.com': [
+    {
+      type: 'class',
+      selector: 'pv-top-card-section__name Sans-26px-black-85%',
+      replacement: {
+        type: 'text',
+        value: '[Candidate Name]'
+      }
+    },
+    {
+      type: 'class',
+      selector: 'pv-top-card-section__image',
+      replacement: {
+        type: 'attribute',
+        childElementTag: 'img',
+        attribute: 'src',
+        value: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+      }
+    },
+    {
+      description: 'Names in Search Results on https://www.linkedin.com/search/results/index/',
+      type: 'class',
+      selector: 'name actor-name',
+      replacement: {
+        type: 'text',
+        value: '[Name]'
+      }
+    },
+    {
+      description: 'Photos in Search Results on https://www.linkedin.com/search/results/index/',
+      type: 'class',
+      selector: 'search-result__image',
+      replacement: {
+        type: 'childElement-attribute',
+        childElementTag: 'img',
+        childElementAttribute: 'src',
+        value: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+      }
+    }
+  ],
   'angel.co': [
     {
       type: 'class',
@@ -114,6 +154,8 @@ function unredactElement(element, replacementRule) {
   element.setAttribute('data-original-replacement-rule', replacementRule.type);
   if (replacementRule.type === 'text') {
     element.textContent = element.getAttribute('data-original-value');
+  } else if (replacementRule.type === 'attribute') {
+    element.setAttribute(replacementRule.attribute, element.getAttribute('data-original-value'));
   } else if (replacementRule.type === 'childElement-text') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
     innerElements[0].textContent = innerElements[0].getAttribute('data-original-value');
@@ -142,6 +184,11 @@ function redactElement(element, replacementRule) {
       element.setAttribute('data-original-value', element.textContent);
     }
     element.textContent = replacementRule.value;
+  } else if (replacementRule.type === 'attribute') {
+    if (element.getAttribute('data-original-value') === null) {
+      element.setAttribute('data-original-value', element.getAttribute(replacementRule.attribute));
+    }
+    element.setAttribute(replacementRule.attribute, replacementRule.value);
   } else if (replacementRule.type === 'childElement-text') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
     if (innerElements[0].getAttribute('data-original-value') === null) {
