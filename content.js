@@ -144,7 +144,7 @@ function redactElement(element, replacementRule) {
     element.textContent = replacementRule.value;
   } else if (replacementRule.type === 'childElement-text') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    if (element.getAttribute('data-original-value') === null) {
+    if (innerElements[0].getAttribute('data-original-value') === null) {
       innerElements[0].setAttribute('data-original-value', innerElements[0].textContent);
     }
     innerElements[0].textContent = replacementRule.value;
