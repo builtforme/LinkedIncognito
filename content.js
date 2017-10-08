@@ -1,20 +1,14 @@
-alert('adding listening onmessage');
-console.log('in content.js');
-try {
-  chrome.runtime.onMessage.addListener(
+let hide = true;
+
+chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    alert('received message');
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-    if (request.greeting == "hello")
-      sendResponse({farewell: "goodbye"});
+    if (request.action === 'icon_click') {
+      hide = !hide;
+      console.log('New value of hide: ', hide);
+      redact();
+    }
   }
 );
-} catch (err) {
-  alert(err);
-}
-alert('listener added');
 
 const redactionMap = {
   'angel.co': [
@@ -88,7 +82,11 @@ const redactors = Object.create(null);
 redactors["class"] = function(redaction) {
   const elements = document.getElementsByClassName(redaction.selector);
   for (const e of elements) {
-    redactElement(e, redaction.replacement);
+    if (hide) {
+      redactElement(e, redaction.replacement);
+    } else {
+      unredactElement(e, redaction.replacement);
+    }
   }
 };
 
@@ -102,28 +100,63 @@ function redact() {
   });
 }
 
-function redactElement(element, replacementRule) {
+function unredactElement(element, replacementRule) {
+  console.log('Now unredacting element ', element);
   // Don't touch re-redact elements we processed previously
-  if (element.getAttribute('data-processed')) {
+  if (element.getAttribute('data-processed') === hide) {
     return;
   }
 
   // Mark this element as having been processed.
-  element.setAttribute('data-processes', true);
+  element.setAttribute('data-processed', hide);
 
   // Save the original value to allow for un-redaction
   element.setAttribute('data-original-replacement-rule', replacementRule.type);
   if (replacementRule.type === 'text') {
-    element.setAttribute('data-original-value', element.textContent);
+    element.textContent = element.getAttribute('data-original-value');
+  } else if (replacementRule.type === 'childElement-text') {
+    // var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
+    // innerElements[0].setAttribute('data-original-value', innerElements[0].textContent);
+    // innerElements[0].textContent = replacementRule.value;
+  } else if (replacementRule.type === 'childElement-attribute') {
+    // var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
+    // innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute));
+    // innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute);
+    // innerElements[0].setAttribute(replacementRule.childElementAttribute, replacementRule.value);
+  } else {
+    throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
+  }
+}
+
+function redactElement(element, replacementRule) {
+  // Don't touch re-redact elements we processed previously
+  // Note that hide is a boolean while getAttribute returns a string.
+  // if (element.getAttribute('data-processed') === ('' + hide)) {
+  //   return;
+  // }
+
+  // Mark this element as having been processed.
+  // element.setAttribute('data-processed', hide);
+
+  // Save the original value to allow for un-redaction
+  element.setAttribute('data-original-replacement-rule', replacementRule.type);
+  if (replacementRule.type === 'text') {
+    if (element.getAttribute('data-original-value') === null) {
+      element.setAttribute('data-original-value', element.textContent);
+    }
     element.textContent = replacementRule.value;
   } else if (replacementRule.type === 'childElement-text') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    innerElements[0].setAttribute('data-original-value', innerElements[0].textContent);
+    if (element.getAttribute('data-original-value') === null) {
+      innerElements[0].setAttribute('data-original-value', innerElements[0].textContent);
+    }
     innerElements[0].textContent = replacementRule.value;
   } else if (replacementRule.type === 'childElement-attribute') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute));
-    innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute);
+    if (element.getAttribute('data-original-value') === null) {
+      innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute));
+      innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute);
+    }
     innerElements[0].setAttribute(replacementRule.childElementAttribute, replacementRule.value);
   } else {
     throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
