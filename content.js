@@ -17,7 +17,7 @@ const redactionMap = {
       selector: 'pv-top-card-section__name Sans-26px-black-85%',
       replacement: {
         type: 'text',
-        value: '[Candidate Name]'
+        value: '[Name]'
       }
     },
     {
@@ -25,9 +25,29 @@ const redactionMap = {
       selector: 'pv-top-card-section__image',
       replacement: {
         type: 'attribute',
-        childElementTag: 'img',
         attribute: 'src',
-        value: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+        value: 'http://www.freeiconspng.com/uploads/profile-icon-9.png'
+      }
+    },
+    {
+      description: 'People Also Viewed...',
+      type: 'class',
+      selector: 'pv-browsemap-section__member-container mt4',
+      replacement: {
+        type: 'childElement-attribute',
+        childElementTag: 'img',
+        childElementAttribute: 'src',
+        value: 'http://www.freeiconspng.com/uploads/profile-icon-9.png'
+      }
+    },
+    {
+      description: 'own profile avatar',
+      type: 'class',
+      selector: 'profile-photo-edit__preview',
+      replacement: {
+        type: 'attribute',
+        attribute: 'src',
+        value: 'http://www.freeiconspng.com/uploads/profile-icon-9.png'
       }
     },
     {
@@ -47,7 +67,7 @@ const redactionMap = {
         type: 'childElement-attribute',
         childElementTag: 'img',
         childElementAttribute: 'src',
-        value: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+        value: 'http://www.freeiconspng.com/uploads/profile-icon-9.png'
       }
     }
   ],
