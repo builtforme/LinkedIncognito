@@ -6,6 +6,12 @@
     "browser_action": {
         "default_title": "LinkedIncognito"
     },
+    "icons": {
+        "16": "icon-16.png",
+        "32": "icon-32.png",
+        "64": "icon-64.png",
+        "128": "icon-128.png"
+    },
     "content_scripts": [
         {
             "matches": [
