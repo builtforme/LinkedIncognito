@@ -1,5 +1,5 @@
 let hide = true;
-console.log('LinkedIncognito is active.');
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.action === 'icon_click') {
