@@ -10,74 +10,6 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-const redactionMap = {
-  'angel.co': [
-    {
-      type: 'class',
-      selector: 'title u-fontSize14 u-colorGray3',
-      replacement: {
-        type: 'text',
-        value: '[Candidate Name]'
-      }
-    },
-    {
-      type: 'class',
-      selector: 'photo s-vgRight0_5',
-      replacement: {
-        type: 'childElement-attribute',
-        childElementTag: 'img',
-        childElementAttribute: 'src',
-        value: 'https://angel.co/images/shared/nopic.png'
-      },
-    },
-    {
-      type: 'class',
-      selector: 's-grid-colSm24 u-colorGray3',
-      replacement: {
-        type: 'text',
-        value: 'Intro Note'
-      }
-    },
-    {
-      type: 'class',
-      selector: 'name u-fontSize24 u-fontWeight300 section-title',
-      replacement: {
-        type: 'childElement-text',
-        childElementTag: 'a',
-        value: '[Candidate Name]'
-      }
-    },
-    {
-      type: 'class',
-      selector: 'field-row-val s-flexgrid-colSmW s-vgPadLeft1',
-      replacement: {
-        type: 'childElement-text',
-        childElementTag: 'a',
-        value: '[Candidate Email]'
-      }
-    },
-    {
-      type: 'class',
-      selector: 'js-browse-table-row-name s-vgRight0_5 candidate-name u-floatLeft',
-      replacement: {
-        type: 'childElement-text',
-        childElementTag: 'a',
-        value: '[Candidate Name]'
-      }
-    },
-    {
-      type: 'class',
-      selector: 'photo js-add-photo',
-      replacement: {
-        type: 'childElement-attribute',
-        childElementTag: 'img',
-        childElementAttribute: 'src',
-        value: 'https://angel.co/images/shared/nopic.png'
-      },
-    },
-  ],
-};
-
 const redactors = Object.create(null);
 redactors["class"] = function(redaction) {
   const elements = document.getElementsByClassName(redaction.selector);
@@ -114,6 +46,8 @@ function unredactElement(element, replacementRule) {
   element.setAttribute('data-original-replacement-rule', replacementRule.type);
   if (replacementRule.type === 'text') {
     element.textContent = element.getAttribute('data-original-value');
+  } else if (replacementRule.type === 'attribute') {
+    element.setAttribute(replacementRule.attribute, element.getAttribute('data-original-value'));
   } else if (replacementRule.type === 'childElement-text') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
     innerElements[0].textContent = innerElements[0].getAttribute('data-original-value');
@@ -142,6 +76,11 @@ function redactElement(element, replacementRule) {
       element.setAttribute('data-original-value', element.textContent);
     }
     element.textContent = replacementRule.value;
+  } else if (replacementRule.type === 'attribute') {
+    if (element.getAttribute('data-original-value') === null) {
+      element.setAttribute('data-original-value', element.getAttribute(replacementRule.attribute));
+    }
+    element.setAttribute(replacementRule.attribute, replacementRule.value);
   } else if (replacementRule.type === 'childElement-text') {
     var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
     if (innerElements[0].getAttribute('data-original-value') === null) {
