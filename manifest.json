@@ -6,7 +6,8 @@
     "version": "1.0",
     "short_name": "LinkedIncognito",
     "browser_action": {
-        "default_title": "LinkedIncognito"
+        "default_title": "LinkedIncognito",
+        "default_popup": "config.html"
     },
     "icons": {
         "16": "icon-16.png",
@@ -24,7 +25,7 @@
                 "redactionMap.js",
                 "content.js"
             ],
-            "run_at": "document_idle"
+            "run_at": "document_start"
         }
     ],
     "background": {

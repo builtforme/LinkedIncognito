@@ -1,8 +1,8 @@
 let hide = true
 
 chrome.runtime.onMessage.addListener(
-  function(request) {
-    if (request.action === 'icon_click') {
+  (request) => {
+    if (request.action === 'toggle') {
       hide = !hide
       parsePage()
     }
@@ -23,7 +23,7 @@ const parsePage = () => {
   })
 }
 
-function unredactElement(element, replacementRule) {
+const unredactElement = (element, replacementRule) => {
   if (replacementRule.type === 'text') {
     element.textContent = element.getAttribute('data-linkedincognito-textcontent')
     element.removeAttribute('data-linkedincognito-textcontent')
@@ -36,7 +36,7 @@ function unredactElement(element, replacementRule) {
   }
 }
 
-function redactElement(element, replacementRule) {
+const redactElement = (element, replacementRule) => {
   if (replacementRule.type === 'text') {
     const redactedTextContent = element.getAttribute('data-linkedincognito-textcontent')
 
@@ -64,9 +64,9 @@ function redactElement(element, replacementRule) {
   }
 }
 
-function observe() {
-  // select the target node
-  var [target] = document.getElementsByTagName('body')
+const observe = () => {
+  // listen for changes on the entire document. at `document_start` time, only the root node (html) is available
+  var [target] = document.getElementsByTagName('html')
 
   // create an observer instance
   var observer = new MutationObserver(() => {
@@ -74,6 +74,7 @@ function observe() {
       parsePage()
     }
   })
+
   observer.observe(target, {
     childList: true,
     subtree: true,
