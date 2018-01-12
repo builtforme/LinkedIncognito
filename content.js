@@ -5,9 +5,20 @@ chrome.runtime.onMessage.addListener(
     if (request.action === 'toggle') {
       hide = !hide
       parsePage()
+    } else if (request.action === 'requestState') {
+      publishState()
     }
   }
 )
+
+const publishState = () => {
+  const count = document.querySelectorAll('[data-linkedincognito-element-is-redacted]').length
+  chrome.runtime.sendMessage({
+    action: 'state',
+    count,
+    hide,
+  })
+}
 
 const parsePage = () => {
   const redactions = redactionMap[document.domain]
@@ -21,6 +32,8 @@ const parsePage = () => {
       }
     }
   })
+
+  publishState()
 }
 
 const unredactElement = (element, replacementRule) => {
@@ -34,6 +47,8 @@ const unredactElement = (element, replacementRule) => {
   } else {
     throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
   }
+
+  element.removeAttribute('data-linkedincognito-element-is-redacted')
 }
 
 const redactElement = (element, replacementRule) => {
@@ -62,6 +77,8 @@ const redactElement = (element, replacementRule) => {
   } else {
     throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
   }
+
+  element.setAttribute('data-linkedincognito-element-is-redacted', true)
 }
 
 const observe = () => {
