@@ -1,59 +1,57 @@
-let hide = true;
+let hide = true
 
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+  function(request) {
     if (request.action === 'icon_click') {
-      hide = !hide;
-      console.log('New value of hide: ', hide);
-      redact();
+      hide = !hide
+      redact()
     }
   }
-);
+)
 
-const redactors = Object.create(null);
-redactors["class"] = function(redaction) {
-  const elements = document.getElementsByClassName(redaction.selector);
+const redactors = Object.create(null)
+redactors['class'] = function(redaction) {
+  const elements = document.getElementsByClassName(redaction.selector)
   for (const e of elements) {
     if (hide) {
-      redactElement(e, redaction.replacement);
+      redactElement(e, redaction.replacement)
     } else {
-      unredactElement(e, redaction.replacement);
+      unredactElement(e, redaction.replacement)
     }
   }
-};
+}
 
 function redact() {
-  const redactions = redactionMap[document.domain];
+  const redactions = redactionMap[document.domain]
   redactions.forEach(r => {
     if (!(r.type in redactors)) {
-      throw new Error(`Unrecognized selector type: ${redactions[i].type}`);
+      throw new Error(`Unrecognized selector type: ${r.type}`)
     }
-    redactors[r.type](r);
-  });
+    redactors[r.type](r)
+  })
 }
 
 function unredactElement(element, replacementRule) {
-  console.log('Now unredacting element ', element);
   // Don't touch re-redact elements we processed previously
   if (element.getAttribute('data-processed') === hide) {
-    return;
+    return
   }
 
   // Mark this element as having been processed.
-  element.setAttribute('data-processed', hide);
+  element.setAttribute('data-processed', hide)
 
   // Save the original value to allow for un-redaction
-  element.setAttribute('data-original-replacement-rule', replacementRule.type);
+  element.setAttribute('data-original-replacement-rule', replacementRule.type)
   if (replacementRule.type === 'text') {
-    element.textContent = element.getAttribute('data-original-value');
+    element.textContent = element.getAttribute('data-original-value')
   } else if (replacementRule.type === 'attribute') {
-    element.setAttribute(replacementRule.attribute, element.getAttribute('data-original-value'));
+    element.setAttribute(replacementRule.attribute, element.getAttribute('data-original-value'))
   } else if (replacementRule.type === 'childElement-text') {
-    var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    innerElements[0].textContent = innerElements[0].getAttribute('data-original-value');
+    let innerElements = element.getElementsByTagName(replacementRule.childElementTag)
+    innerElements[0].textContent = innerElements[0].getAttribute('data-original-value')
   } else if (replacementRule.type === 'childElement-attribute') {
-    var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
-    innerElements[0].setAttribute(replacementRule.childElementAttribute, innerElements[0].getAttribute('data-original-value'));
+    let innerElements = element.getElementsByTagName(replacementRule.childElementTag)
+    innerElements[0].setAttribute(replacementRule.childElementAttribute, innerElements[0].getAttribute('data-original-value'))
   } else {
     throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
   }
@@ -70,32 +68,32 @@ function redactElement(element, replacementRule) {
   // element.setAttribute('data-processed', hide);
 
   // Save the original value to allow for un-redaction
-  element.setAttribute('data-original-replacement-rule', replacementRule.type);
+  element.setAttribute('data-original-replacement-rule', replacementRule.type)
   if (replacementRule.type === 'text') {
     if (element.getAttribute('data-original-value') === null) {
-      element.setAttribute('data-original-value', element.textContent);
+      element.setAttribute('data-original-value', element.textContent)
     }
-    element.textContent = replacementRule.value;
+    element.textContent = replacementRule.value
   } else if (replacementRule.type === 'attribute') {
     if (element.getAttribute('data-original-value') === null) {
-      element.setAttribute('data-original-value', element.getAttribute(replacementRule.attribute));
+      element.setAttribute('data-original-value', element.getAttribute(replacementRule.attribute))
     }
-    element.setAttribute(replacementRule.attribute, replacementRule.value);
+    element.setAttribute(replacementRule.attribute, replacementRule.value)
   } else if (replacementRule.type === 'childElement-text') {
-    var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
+    let innerElements = element.getElementsByTagName(replacementRule.childElementTag)
     if (innerElements[0].getAttribute('data-original-value') === null) {
-      innerElements[0].setAttribute('data-original-value', innerElements[0].textContent);
+      innerElements[0].setAttribute('data-original-value', innerElements[0].textContent)
     }
-    innerElements[0].textContent = replacementRule.value;
+    innerElements[0].textContent = replacementRule.value
   } else if (replacementRule.type === 'childElement-attribute') {
-    var innerElements = element.getElementsByTagName(replacementRule.childElementTag);
+    let innerElements = element.getElementsByTagName(replacementRule.childElementTag)
     if (innerElements[0].getAttribute('data-original-value') === null
       || innerElements[0].getAttribute('data-original-value') === 'null'
       || innerElements[0].getAttribute('data-original-value') === replacementRule.value) {
-      innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute));
-      innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute);
+      innerElements[0].setAttribute('data-original-value', innerElements[0].getAttribute(replacementRule.childElementAttribute))
+      innerElements[0].setAttribute('data-original-attribute', replacementRule.childElementAttribute)
     }
-    innerElements[0].setAttribute(replacementRule.childElementAttribute, replacementRule.value);
+    innerElements[0].setAttribute(replacementRule.childElementAttribute, replacementRule.value)
   } else {
     throw new Error(`Unrecognized replacment rule type ${replacementRule.type}`)
   }
@@ -103,16 +101,14 @@ function redactElement(element, replacementRule) {
 
 function observe() {
   // select the target node
-  var target = document.getElementsByTagName('body')[0];
+  var target = document.getElementsByTagName('body')[0]
 
   // create an observer instance
-  var observer = new MutationObserver(mutations => {
-    redact();
-  });
-  observer.observe(target, { childList: true, subtree: true });
+  var observer = new MutationObserver(() => {
+    redact()
+  })
+  observer.observe(target, { childList: true, subtree: true })
 }
 
-
-
-redact();
-observe();
+redact()
+observe()

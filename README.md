@@ -36,6 +36,13 @@ Install from a local checkout by performing these steps:
 1. Click "Load unpacked extension..."
 1. Find and select the LinkedIncognito directory created from step 1
 
+## Linting
+An ESLint configuration file is part of this repo, to get started and run the linter:
+
+1. Install ESLint globally <br/> `npm i -g eslint`
+1. In the project directory, run the following command to lint all the JavaScript files in the project: <br/> 
+`eslint *.js`
+
 ### Deployment
 Only BuiltForMe can deploy to the Chrome Web Store.
 
