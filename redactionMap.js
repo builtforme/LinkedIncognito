@@ -1,4 +1,4 @@
-const redactionMap = {
+const redactionMap = { // eslint-disable-line
   'www.linkedin.com': [
     {
       description: 'Main candidate profile name',
