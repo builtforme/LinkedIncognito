@@ -31,11 +31,57 @@
       .count {
         font-size: 1.25em;
       }
+      .switch {
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #CCC;
+        transition: .4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: #FFF;
+        transition: .4s;
+        border-radius: 50%;
+      }
+      .toggle:checked + .slider {
+        background-color: #2196F3;
+      }
+      .toggle:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+      .toggle:checked + .slider:before {
+        transform: translateX(26px);
+      }
+      .pause {
+        cursor: pointer;
+        font-size: 40px;
+      }
     </style>
   </head>
   <body>
     <h1>LinkedIncognito</h1>
-    <button class="toggle">Toggle</button>
+    <label class="switch">
+      <input type="checkbox" class="toggle" style="display:none;" checked="checked">
+      <span class="slider"></span>>
+    </label>
+    <div class="pause">||</div>
     <h2>elements <s>redacted</s></h2>
     <p class="count">...</p>
   </body>
