@@ -55,7 +55,8 @@ const parsePage = () => {
 
 const unredactElement = (element, replacementRule) => {
   if (replacementRule.type === 'text') {
-    element.textContent = element.getAttribute('data-linkedincognito-textcontent')
+    const [textNode] = element.childNodes
+    textNode.nodeValue = element.getAttribute('data-linkedincognito-textcontent')
     element.removeAttribute('data-linkedincognito-textcontent')
   } else if (replacementRule.type === 'attribute') {
     const attributeKey = `data-linkedincognito-${replacementRule.attribute}`
@@ -76,8 +77,10 @@ const redactElement = (element, replacementRule) => {
       element.setAttribute('data-linkedincognito-textcontent', element.textContent)
     }
 
-    if (element.textContent !== replacementRule.value) {
-      element.textContent = replacementRule.value
+    const [textNode] = element.childNodes
+
+    if (textNode.nodeValue !== replacementRule.value) {
+      textNode.nodeValue = replacementRule.value
     }
   } else if (replacementRule.type === 'attribute') {
     const attributeKey = `data-linkedincognito-${replacementRule.attribute}`
