@@ -1,4 +1,5 @@
 let hide = true
+let timeoutReference = null
 
 chrome.runtime.onMessage.addListener(
   (request) => {
@@ -7,9 +8,24 @@ chrome.runtime.onMessage.addListener(
       parsePage()
     } else if (request.action === 'requestState') {
       publishState()
+    } else if (request.action === 'pause') {
+      pauseRedaction()
     }
   }
 )
+
+const pauseRedaction = () => {
+  if (!timeoutReference) {
+    hide = false
+    parsePage()
+    timeoutReference = setTimeout(() => {
+      hide = true
+      parsePage()
+      clearTimeout(timeoutReference)
+      timeoutReference = null
+    }, 10 * 60 * 1000) // pause for 10 minutes
+  }
+}
 
 const publishState = () => {
   const count = document.querySelectorAll('[data-linkedincognito-element-is-redacted]').length
@@ -17,6 +33,7 @@ const publishState = () => {
     action: 'state',
     count,
     hide,
+    paused : timeoutReference ? true : false,
   })
 }
 
