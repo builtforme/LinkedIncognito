@@ -5,6 +5,8 @@ chrome.runtime.onMessage.addListener(
   (request) => {
     if (request.action === 'toggle') {
       hide = !hide
+      clearTimeout(timeoutReference)
+      timeoutReference = null
       parsePage()
     } else if (request.action === 'requestState') {
       publishState()
