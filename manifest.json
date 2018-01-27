@@ -3,7 +3,7 @@
     "name": "LinkedIncognito",
     "description": "Anonymizes candidates to reduce unconscious bias.",
     "author": "Built For Me Inc.",
-    "version": "1.1",
+    "version": "1.2",
     "short_name": "LinkedIncognito",
     "browser_action": {
         "default_title": "LinkedIncognito",

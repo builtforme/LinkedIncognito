@@ -20,7 +20,7 @@ On LinkedIn profile pages, it turns
 
 ![person](https://user-images.githubusercontent.com/1891931/31356825-48e4a502-acf4-11e7-96fb-abf310bb3f9b.png)
 
-into
+intchro
 
 ![anonymized person](https://user-images.githubusercontent.com/1891931/31356820-4681f6fc-acf4-11e7-983b-6403937c9eff.png)
 
@@ -40,12 +40,12 @@ Install from a local checkout by performing these steps:
 An ESLint configuration file is part of this repo, to get started and run the linter:
 
 1. Install ESLint globally <br/> `npm i -g eslint`
-1. In the project directory, run the following command to lint all the JavaScript files in the project: <br/> 
+1. In the project directory, run the following command to lint all the JavaScript files in the project: <br/>
 `eslint *.js`
 
 ### Deployment
 Only BuiltForMe can deploy to the Chrome Web Store.
 
 1. Appropriately update the version number in `manifest.json`.
-1. Generate a zip file by running `zip li.zip *.png *.js *.json`
+1. Generate a zip file by running `zip li.zip *.png *.js *.json *.html`
 1. Upload to Chrome Web Store
